@@ -15,6 +15,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import AddressForm from "./AddressForm";
 import PaymentForm from "./PaymentForm";
 import Review from "./Review";
+import { CheckoutContext } from "../App";
 
 function Copyright() {
   return (
@@ -31,14 +32,14 @@ function Copyright() {
 
 const steps = ["Shipping address", "Payment details", "Review your order"];
 
-function getStepContent(step) {
+function getStepContent(step, state, setState) {
   switch (step) {
     case 0:
-      return <AddressForm />;
+      return <AddressForm activeStep={state} setActiveStep={setState} />;
     case 1:
-      return <PaymentForm />;
+      return <PaymentForm activeStep={state} setActiveStep={setState} />;
     case 2:
-      return <Review />;
+      return <Review activeStep={state} setActiveStep={setState} />;
     default:
       throw new Error("Unknown step");
   }
@@ -48,6 +49,10 @@ const theme = createTheme();
 
 export default function Checkout() {
   const [activeStep, setActiveStep] = React.useState(0);
+
+  let data = React.useContext(CheckoutContext);
+
+  console.log("from checkout", data);
 
   const handleNext = () => {
     setActiveStep(activeStep + 1);
@@ -104,7 +109,7 @@ export default function Checkout() {
               </React.Fragment>
             ) : (
               <React.Fragment>
-                {getStepContent(activeStep)}
+                {getStepContent(activeStep, activeStep, setActiveStep)}
                 <Box sx={{ display: "flex", justifyContent: "center" }}>
                   {activeStep !== 0 && (
                     <Button onClick={handleBack} sx={{ mt: 3, ml: 1 }}>
@@ -112,13 +117,14 @@ export default function Checkout() {
                     </Button>
                   )}
 
-                  <Button
+                  {/* <Button
                     variant="contained"
                     onClick={handleNext}
                     sx={{ mt: 3, ml: 1 }}
                   >
                     {activeStep === steps.length - 1 ? "Place order" : "Next"}
-                  </Button>
+    
+                  </Button> */}
                 </Box>
               </React.Fragment>
             )}
